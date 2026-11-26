@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Films recommandés</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-50 -50 100 100'%3E%3Cpath fill='%23c8102e' d='M0-48 6-6 48 0 6 6 0 48-6 6-48 0-6-6Z'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Limelight&family=Oswald:wght@500;600&family=Josefin+Sans:wght@400;600;700&family=Yellowtail&display=swap" rel="stylesheet">
+<style>
+/* Un soir de première en 1955 : fronton lumineux, billets d'entrée et cartes Technicolor. */
+:root{color-scheme:light dark;
+--bg:light-dark(#e6f0ea,#0c1a1c);--ink:light-dark(#1c2a2b,#f1ece0);--mute:light-dark(#4f6264,#a9bcbc);
+--red:#c8102e;--teal:light-dark(#0f5e63,#2f9aa0);--mustard:#f2b632;--card:light-dark(#fffaf0,#152a2d);--line:light-dark(#c9d8d1,#2c474a);
+--accent:light-dark(#a50d26,#ff7d8f)}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.55 "Josefin Sans",system-ui,sans-serif;overflow-x:clip;
+background-image:radial-gradient(light-dark(rgba(15,94,99,.07),rgba(255,255,255,.04)) 1.5px,transparent 1.6px);background-size:22px 22px}
+h1,h2,.ft{font-family:Limelight,Georgia,serif;font-weight:400;line-height:1.05;text-wrap:balance;margin:0}
+.top{background:linear-gradient(180deg,#8e0a20,var(--red) 40%,#a50d26);color:#fff;padding:clamp(22px,4vw,44px) max(5vw,16px) 0;text-align:center;position:relative;overflow:hidden}
+.top::after{content:"";display:block;height:18px;margin:clamp(20px,3vw,32px) calc(-1*max(5vw,16px)) 0;background:repeating-linear-gradient(90deg,#0f5e63 0 28px,#f2b632 28px 56px)}
+.sign{position:relative;display:inline-block;max-width:100%;padding:clamp(18px,3vw,30px) clamp(22px,5vw,64px);border-radius:18px;background:#1a0b0e;
+border:3px solid var(--mustard);box-shadow:0 0 0 8px #1a0b0e,0 0 0 11px var(--mustard),0 18px 40px rgba(0,0,0,.45)}
+.sign::before{content:"";position:absolute;inset:7px;border-radius:12px;pointer-events:none;border:7px dotted #ffe08a;filter:drop-shadow(0 0 4px #f2b632)}
+@media(prefers-reduced-motion:no-preference){.sign::before{animation:glow 1.4s ease-in-out infinite alternate}}
+@keyframes glow{to{opacity:.55;filter:none}}
+h1{font-size:clamp(38px,7vw,64px);color:#fff7e0;text-shadow:0 0 14px rgba(242,182,50,.75),0 3px 0 #8e0a20}
+.top p.lead{margin:22px auto 0;color:#ffe9ec;max-width:56ch}
+.star{position:absolute;width:clamp(60px,9vw,120px);top:30px;opacity:.9}
+.star.l{left:max(3vw,10px)}.star.r{right:max(3vw,10px);top:auto;bottom:46px}
+@media(max-width:640px){.star{display:none}}
+nav{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:22px}
+nav[hidden]{display:none}
+nav a,nav button{font:500 17px/1 Oswald,sans-serif;color:#fff;text-decoration:none;padding:12px 22px;border-radius:999px;border:2px solid rgba(255,255,255,.5);min-height:44px;display:inline-flex;align-items:center;background:none;cursor:pointer}
+nav a[aria-current=page]{background:var(--mustard);color:#1a0b0e;border-color:var(--mustard)}
+nav a:focus-visible,nav button:focus-visible{outline:3px solid #fff;outline-offset:3px}
+.who{margin:14px 0 0;color:#ffe9ec;font-size:15px}.who:empty{display:none}
+.wrap{max-width:1240px;margin:0 auto;padding:clamp(24px,4vw,48px) max(5vw,16px)}
+.view[hidden]{display:none}
+#v-add,#v-login{max-width:620px;margin:0 auto}
+.ticket{background:var(--card);border-radius:16px;padding:26px clamp(18px,4vw,34px) 28px;position:relative;border-top:14px solid var(--teal);box-shadow:0 2px 0 var(--line),0 16px 34px light-dark(rgba(15,94,99,.18),rgba(0,0,0,.4))}
+.ticket::before,.ticket::after{content:"";position:absolute;top:104px;width:28px;height:28px;border-radius:50%;background:var(--bg)}
+.ticket::before{left:-14px}.ticket::after{right:-14px}
+.ticket h2{font-size:clamp(30px,5vw,40px);color:var(--red)}
+@media(prefers-color-scheme:dark){.ticket h2{color:#ff6b80}}
+.ticket .sub{color:var(--mute);margin:8px 0 18px;padding-bottom:18px;border-bottom:3px dotted var(--line)}
+label{display:block;font:500 16px/1.3 Oswald,sans-serif;margin:16px 0 6px}
+input,textarea,select{width:100%;font:inherit;font-size:16px;color:var(--ink);background:light-dark(#fff,#0f2022);border:2px solid var(--line);border-radius:10px;padding:10px 12px;min-height:46px}
+textarea{min-height:140px;resize:vertical}
+input:focus-visible,textarea:focus-visible,select:focus-visible,button:focus-visible{outline:3px solid var(--mustard);outline-offset:2px}
+.row{display:grid;grid-template-columns:minmax(0,1fr) 110px;gap:12px}
+.req{color:var(--accent)}
+.err{color:var(--accent);font-weight:700;min-height:1.4em;margin:10px 0 0}
+.ok{background:light-dark(#fff3cf,#3a2d05);border-left:5px solid var(--mustard);border-radius:8px;padding:10px 14px;margin:10px 0 0}
+.ok a{color:inherit;font-weight:700}.ok:empty{display:none}
+button{font:500 17px/1 Oswald,sans-serif;min-height:46px;border-radius:999px;border:0;padding:0 22px;cursor:pointer}
+.go{background:var(--red);color:#fff;box-shadow:0 4px 0 #8e0a20}
+.go:active{transform:translateY(2px);box-shadow:0 2px 0 #8e0a20}
+.go:disabled{opacity:.6}
+.ghost{background:none;color:var(--ink);border:2px solid var(--line)}
+.btns{display:flex;gap:10px;margin-top:10px}.btns .go{flex:1}
+.bar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:24px}
+.bar h2{font-size:clamp(32px,5vw,44px);color:var(--teal);flex:1 1 240px}
+#cnt{font:500 .5em Oswald,sans-serif;color:var(--mute);vertical-align:middle}
+.bar input{flex:1 1 220px;width:auto}.bar select{width:auto;flex:0 0 auto}
+.list{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:22px}
+.film{--c:var(--teal);background:var(--card);border-radius:14px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 2px 0 var(--line),0 12px 26px light-dark(rgba(15,94,99,.14),rgba(0,0,0,.35))}
+.film:nth-child(3n+2){--c:var(--red)}.film:nth-child(3n){--c:#b9851a}
+.head{background:var(--c);color:#fff;padding:18px 18px 22px;position:relative;
+-webkit-mask:radial-gradient(circle 6px at 50% 100%,#0000 98%,#000) 0 0/16px 100% repeat-x;mask:radial-gradient(circle 6px at 50% 100%,#0000 98%,#000) 0 0/16px 100% repeat-x}
+.ft{font-size:clamp(24px,3vw,30px);overflow-wrap:anywhere}
+.meta{display:flex;flex-wrap:wrap;gap:4px 12px;margin-top:8px;font:500 16px/1.3 Oswald,sans-serif;color:#fff2d6}
+.yr{background:#fff7e0;color:#1a0b0e;border-radius:999px;padding:2px 10px;white-space:nowrap}
+.why{margin:16px 18px;white-space:pre-wrap;overflow-wrap:anywhere;flex:1}
+.why:empty{margin:6px 18px;flex:1}
+.foot{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;color:var(--mute);font-size:15px;border-top:2px dotted var(--line);margin:0 18px;padding:10px 0 14px}
+.by{font-family:Yellowtail,cursive;font-size:20px;color:var(--ink)}
+.acts{display:flex;gap:6px}.acts button{min-height:36px;padding:0 14px;font-size:15px}
+.empty{grid-column:1/-1;background:var(--card);border:3px dashed var(--line);border-radius:14px;padding:40px 20px;text-align:center;color:var(--mute);font-size:18px}
+.empty a{color:var(--accent);font-weight:700}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font:500 15px/1 Oswald,sans-serif;min-height:40px;padding:0 16px;border-radius:999px;background:light-dark(#fff,#0f2022);color:var(--ink);border:2px solid var(--line)}
+.chip[aria-pressed=true]{background:var(--teal);border-color:var(--teal);color:#fff}
+.chip[aria-pressed=true]::before{content:"✓ "}
+.chip small{font-size:13px;opacity:.75;margin-left:4px}
+#cf{margin:-8px 0 22px}#cf:empty{display:none}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.tag{font:500 14px/1 Oswald,sans-serif;background:rgba(0,0,0,.25);color:#fff;border:1px solid rgba(255,255,255,.55);border-radius:999px;padding:5px 10px}
+.note{background:light-dark(#fff3cf,#3a2d05);border-radius:8px;padding:10px 14px;margin-bottom:16px}
+.note:empty{display:none}
+</style>
+</head>
+<body>
+<header class="top">
+  <svg class="star l" viewBox="-50 -50 100 100" aria-hidden="true"><g fill="#f2b632"><path d="M0-48 6-6 48 0 6 6 0 48-6 6-48 0-6-6Z"/><path d="M0-26 4-4 26 0 4 4 0 26-4 4-26 0-4-4Z" transform="rotate(45)" fill="#fff7e0"/></g></svg>
+  <svg class="star r" viewBox="-50 -50 100 100" aria-hidden="true"><g fill="#fff7e0"><path d="M0-48 6-6 48 0 6 6 0 48-6 6-48 0-6-6Z"/><path d="M0-26 4-4 26 0 4 4 0 26-4 4-26 0-4-4Z" transform="rotate(45)" fill="#f2b632"/></g></svg>
+  <div class="sign"><h1>Films recommandés</h1></div>
+  <p class="lead">Partagez un film que vous aimez : son titre, son réalisateur, son année, et surtout pourquoi il vaut le détour.</p>
+  <nav aria-label="Pages" id="nav" hidden><a href="#recommander" id="n-add">Recommander un film</a><a href="#liste" id="n-list">Recommandations</a><button type="button" id="logout">Se déconnecter</button></nav>
+  <p class="who" id="who"></p>
+</header>
+
+<main class="wrap">
+  <section class="view" id="v-login" hidden><div class="ticket">
+    <h2>Entrée sur invitation</h2>
+    <p class="sub">Indiquez votre adresse e-mail : vous recevrez un lien pour entrer, sans mot de passe.</p>
+    <form id="lf" novalidate>
+      <label for="em">Adresse e-mail</label>
+      <input id="em" type="email" autocomplete="email" inputmode="email" maxlength="200">
+      <p class="err" id="lerr" role="alert"></p>
+      <p class="ok" id="lok" role="status"></p>
+      <div class="btns"><button class="go" id="lsend" type="submit">Recevoir mon lien d’entrée</button></div>
+    </form>
+  </div></section>
+
+  <section class="view" id="v-add" hidden><div class="ticket" aria-labelledby="ft">
+    <h2 id="ft">Recommander un film</h2>
+    <p class="sub">Seul le titre est obligatoire.</p>
+    <form id="f" novalidate>
+      <label for="t">Titre du film <span class="req">*</span></label>
+      <input id="t" maxlength="200" autocomplete="off">
+      <div class="row">
+        <div><label for="d">Réalisateur</label><input id="d" maxlength="200" autocomplete="off"></div>
+        <div><label for="y">Année</label><input id="y" inputmode="numeric" maxlength="4" autocomplete="off"></div>
+      </div>
+      <label for="cs">Catégorie</label>
+      <select id="cs"></select>
+      <input id="nc" maxlength="40" placeholder="Nom de la nouvelle catégorie" aria-label="Nouvelle catégorie" autocomplete="off" hidden style="margin-top:10px">
+      <label for="w">Pourquoi ce film est bien</label>
+      <textarea id="w" maxlength="4000" placeholder="Ce qui vous a marqué, à qui vous le conseillez…"></textarea>
+      <p class="err" id="err" role="alert"></p>
+      <p class="ok" id="ok" role="status"></p>
+      <div class="btns">
+        <button class="go" id="save" type="submit">Publier la recommandation</button>
+        <button class="ghost" id="cancel" type="button" hidden>Annuler</button>
+      </div>
+    </form>
+  </div></section>
+
+  <section class="view" id="v-list" aria-labelledby="lt" hidden>
+    <div class="bar">
+      <h2 id="lt">Recommandations <span id="cnt"></span></h2>
+      <input id="q" type="search" placeholder="Chercher un titre, un réalisateur…" aria-label="Rechercher">
+      <select id="sort" aria-label="Trier">
+        <option value="new">Plus récents</option>
+        <option value="title">Titre A→Z</option>
+        <option value="yd">Année (récente)</option>
+        <option value="ya">Année (ancienne)</option>
+      </select>
+    </div>
+    <div class="chips" id="cf" role="group" aria-label="Filtrer par catégorie"></div>
+    <div class="note" id="note"></div>
+    <div class="list" id="list"></div>
+  </section>
+</main>
+
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+import { SUPABASE_URL, SUPABASE_ANON_KEY } from './config.js';
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const PRESET = ['Western', 'Nouvelle vague', 'Péplum', 'Italien', 'Film noir', 'Comédie musicale'];
+const norm = c => c.trim().replace(/\s+/g, ' ').slice(0, 40);
+const same = (a, b) => a.localeCompare(b, 'fr', {sensitivity: 'base'}) === 0;
+const thisYear = new Date().getFullYear();
+
+// Lien d'entrée expiré ou déjà utilisé : Supabase renvoie l'erreur dans l'adresse
+const hashParams = new URLSearchParams(location.hash.slice(1));
+const linkError = hashParams.get('error_code') || hashParams.get('error');
+
+const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { auth: { flowType: 'implicit', detectSessionInUrl: true, persistSession: true } });
+
+let session = null, me = { name: '', is_admin: false }, films = [], editing = null, sel = '', filt = '', pendingDel = null;
+
+// ---------- Catégories ----------
+function allCats() {
+  const out = [...PRESET];
+  for (const f of films) if (f.category && !out.some(o => same(o, f.category))) out.push(f.category);
+  if (sel && !out.some(o => same(o, sel))) out.push(sel);
+  return out;
+}
+function renderCats() {
+  const other = $('cs').value === '__autre';
+  $('cs').innerHTML = '<option value="">Aucune catégorie</option>' +
+    allCats().sort((a, b) => a.localeCompare(b, 'fr')).map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join('') +
+    '<option value="__autre">Autre (nouvelle catégorie)…</option>';
+  $('cs').value = other ? '__autre' : (allCats().find(c => same(c, sel || '\u0000')) || '');
+  $('nc').hidden = $('cs').value !== '__autre';
+}
+function renderFilter() {
+  const counts = {};
+  for (const f of films) if (f.category) { const k = Object.keys(counts).find(o => same(o, f.category)) || f.category; counts[k] = (counts[k] || 0) + 1; }
+  const keys = Object.keys(counts).sort((a, b) => a.localeCompare(b, 'fr'));
+  if (filt && !keys.some(k => same(k, filt))) filt = '';
+  $('cf').innerHTML = keys.length ? `<button type="button" class="chip" data-f="" aria-pressed="${!filt}">Toutes</button>` +
+    keys.map(k => `<button type="button" class="chip" data-f="${esc(k)}" aria-pressed="${same(filt || '\u0000', k)}">${esc(k)}<small>${counts[k]}</small></button>`).join('') : '';
+}
+
+// ---------- Liste ----------
+function render() {
+  const q = $('q').value.trim().toLowerCase();
+  renderFilter();
+  let rows = films.filter(f => (!q || [f.title, f.director, String(f.year || ''), f.why, f.category, f.author_name].join(' ').toLowerCase().includes(q))
+    && (!filt || (f.category && same(f.category, filt))));
+  const s = $('sort').value, yv = (f, d) => f.year || (d ? -1e9 : 1e9);
+  rows.sort((a, b) => s === 'title' ? a.title.localeCompare(b.title, 'fr')
+    : s === 'yd' ? yv(b, 1) - yv(a, 1) : s === 'ya' ? yv(a) - yv(b) : b.created_at.localeCompare(a.created_at));
+  $('cnt').textContent = films.length ? `(${films.length})` : '';
+  if (!films.length) { $('list').innerHTML = '<div class="empty">Aucun film pour l’instant. <a href="#recommander">Recommandez le premier !</a></div>'; return; }
+  if (!rows.length) { $('list').innerHTML = '<div class="empty">Aucun film ne correspond à cette recherche ou à cette catégorie.</div>'; return; }
+  const uid = session?.user?.id;
+  $('list').innerHTML = rows.map(f => {
+    const mine = me.is_admin || f.author_id === uid;
+    const who = f.author_name ? `<span class="by">par ${esc(f.author_name)}</span>` : '';
+    const when = new Date(f.created_at).toLocaleDateString('fr-FR', {day: 'numeric', month: 'long', year: 'numeric'});
+    return `<article class="film">
+      <div class="head"><h3 class="ft">${esc(f.title)}</h3>
+      ${f.director || f.year ? `<div class="meta">${f.director ? `<span>de ${esc(f.director)}</span>` : ''}${f.year ? `<span class="yr">${esc(f.year)}</span>` : ''}</div>` : ''}
+      ${f.category ? `<div class="tags"><span class="tag">${esc(f.category)}</span></div>` : ''}</div>
+      <p class="why">${esc(f.why)}</p>
+      <div class="foot"><span>${who}${who ? ' · ' : ''}${esc(when)}</span>
+      ${mine ? `<span class="acts"><button class="ghost" data-e="${esc(f.id)}">Modifier</button><button class="ghost" data-x="${esc(f.id)}">Supprimer</button></span>` : ''}</div>
+    </article>`;
+  }).join('');
+}
+
+async function loadFilms() {
+  const { data, error } = await sb.from('films').select('*').order('created_at', { ascending: false });
+  if (error) { $('note').textContent = 'Impossible de charger les recommandations pour le moment.'; return; }
+  $('note').textContent = '';
+  films = data.map(x => ({ ...x, title: x.title || '', director: x.director || '', why: x.why || '', category: x.category ? norm(x.category) : '' }));
+  render(); if (!editing) renderCats();
+}
+
+// ---------- Formulaire ----------
+function resetForm() {
+  editing = null; $('f').reset(); $('err').textContent = ''; sel = ''; $('cs').value = ''; renderCats();
+  $('ft').textContent = 'Recommander un film'; $('save').textContent = 'Publier la recommandation'; $('cancel').hidden = true;
+}
+
+$('f').addEventListener('submit', async e => {
+  e.preventDefault();
+  const title = $('t').value.trim(), director = $('d').value.trim(), why = $('w').value.trim(), y = $('y').value.trim(), year = Number(y);
+  $('ok').textContent = '';
+  if (!title) { $('err').textContent = 'Indiquez au moins le titre du film.'; $('t').focus(); return; }
+  if (y && (!/^\d{4}$/.test(y) || year < 1888 || year > thisYear + 2)) { $('err').textContent = `L’année doit être entre 1888 et ${thisYear + 2}.`; $('y').focus(); return; }
+  if ($('cs').value === '__autre') {
+    const c = norm($('nc').value);
+    if (!c) { $('err').textContent = 'Indiquez le nom de la nouvelle catégorie, ou choisissez-en une dans la liste.'; $('nc').focus(); return; }
+    sel = allCats().find(o => same(o, c)) || c;
+  } else sel = $('cs').value;
+  $('save').disabled = true; $('err').textContent = '';
+  const row = { title, director, year: y ? year : null, why, category: sel || null };
+  const wasEdit = editing;
+  const { error } = wasEdit ? await sb.from('films').update(row).eq('id', wasEdit) : await sb.from('films').insert(row);
+  $('save').disabled = false;
+  if (error) { $('err').textContent = error.code === '42501' ? 'Vous n’avez pas le droit de faire cela.' : 'L’enregistrement a échoué, réessayez.'; return; }
+  resetForm(); await loadFilms();
+  if (wasEdit) location.hash = 'liste';
+  else $('ok').innerHTML = '« ' + esc(title) + ' » a bien été ajouté. <a href="#liste">Voir les recommandations</a>';
+});
+$('cancel').addEventListener('click', () => { const was = editing; resetForm(); if (was) location.hash = 'liste'; });
+$('cs').addEventListener('change', () => {
+  const v = $('cs').value; $('nc').hidden = v !== '__autre';
+  if (v === '__autre') $('nc').focus(); else sel = v;
+});
+
+$('list').addEventListener('click', async e => {
+  const b = e.target.closest('button'); if (!b) return;
+  if (b.dataset.e) {
+    const f = films.find(x => x.id === b.dataset.e); if (!f) return;
+    editing = f.id; $('t').value = f.title; $('d').value = f.director; $('y').value = f.year || ''; $('w').value = f.why;
+    sel = f.category || ''; $('cs').value = ''; renderCats();
+    $('ft').textContent = 'Modifier la recommandation'; $('save').textContent = 'Enregistrer'; $('cancel').hidden = false;
+    $('ok').textContent = ''; location.hash = 'recommander'; $('t').focus();
+  } else if (b.dataset.x) {
+    if (pendingDel !== b.dataset.x) { pendingDel = b.dataset.x; b.textContent = 'Confirmer ?'; return; }
+    pendingDel = null; b.disabled = true;
+    const { error } = await sb.from('films').delete().eq('id', b.dataset.x);
+    if (error) { b.disabled = false; b.textContent = 'Échec'; return; }
+    if (editing === b.dataset.x) resetForm();
+    await loadFilms();
+  }
+});
+$('q').addEventListener('input', render);
+$('sort').addEventListener('change', render);
+$('cf').addEventListener('click', e => { const b = e.target.closest('[data-f]'); if (!b) return; filt = b.dataset.f; render(); });
+
+// ---------- Pages ----------
+function route() {
+  const inside = !!session;
+  $('nav').hidden = !inside; $('v-login').hidden = inside;
+  if (!inside) { $('v-add').hidden = $('v-list').hidden = true; document.title = 'Films recommandés'; return; }
+  const list = location.hash === '#liste';
+  $('v-list').hidden = !list; $('v-add').hidden = list;
+  $('n-list').removeAttribute('aria-current'); $('n-add').removeAttribute('aria-current');
+  $(list ? 'n-list' : 'n-add').setAttribute('aria-current', 'page');
+  document.title = list ? 'Recommandations' : 'Recommander un film';
+}
+window.addEventListener('hashchange', () => { route(); window.scrollTo(0, 0); });
+
+// ---------- Connexion ----------
+$('lf').addEventListener('submit', async e => {
+  e.preventDefault();
+  const email = $('em').value.trim().toLowerCase();
+  $('lerr').textContent = ''; $('lok').textContent = '';
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { $('lerr').textContent = 'Indiquez une adresse e-mail valide.'; $('em').focus(); return; }
+  $('lsend').disabled = true;
+  const { error } = await sb.auth.signInWithOtp({ email, options: { emailRedirectTo: location.origin + location.pathname } });
+  $('lsend').disabled = false;
+  if (!error) { $('lok').textContent = `C’est envoyé ! Ouvrez l’e-mail reçu à ${email} et cliquez sur le lien pour entrer. Pensez à regarder dans les indésirables.`; return; }
+  const m = (error.message || '').toLowerCase();
+  $('lerr').textContent = m.includes('database error') || m.includes('not allowed') || m.includes('signups')
+    ? 'Cette adresse n’est pas sur la liste des invités. Demandez à l’organisateur de vous ajouter.'
+    : error.status === 429 || m.includes('rate') ? 'Trop de demandes : patientez une minute avant de redemander un lien.'
+    : 'L’envoi a échoué, réessayez dans un instant.';
+});
+$('logout').addEventListener('click', async () => { await sb.auth.signOut(); location.hash = ''; });
+
+async function enter(s) {
+  const was = session?.user?.id;
+  session = s;
+  if (!s) { films = []; me = { name: '', is_admin: false }; $('who').textContent = ''; route(); return; }
+  if (/access_token|refresh_token/.test(location.hash)) history.replaceState(null, '', location.pathname + location.search);
+  route();
+  if (was === s.user.id) return;
+  const { data, error } = await sb.rpc('me');
+  if (error) { $('note').textContent = 'Le site ne répond pas pour le moment, rechargez la page.'; return; }
+  if (!data) { // connecté mais retiré de la liste des invités
+    await sb.auth.signOut();
+    $('lerr').textContent = 'Cette adresse n’est plus sur la liste des invités.';
+    return;
+  }
+  me = data;
+  $('who').textContent = `Bonjour ${me.name || s.user.email} !`;
+  $('note').textContent = 'Chargement des recommandations…';
+  renderCats(); loadFilms();
+}
+
+sb.auth.onAuthStateChange((_event, s) => { setTimeout(() => enter(s), 0); });
+const { data: { session: s0 } } = await sb.auth.getSession();
+if (!s0 && linkError) {
+  $('lerr').textContent = 'Ce lien d’entrée a expiré ou a déjà servi. Demandez-en un nouveau ci-dessous.';
+  history.replaceState(null, '', location.pathname + location.search);
+}
+await enter(s0);
+window.addEventListener('focus', () => { if (session) loadFilms(); });
+</script>
+</body>
+</html>
