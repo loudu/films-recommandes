@@ -122,7 +122,7 @@ button{font:500 17px/1 Oswald,sans-serif;min-height:46px;border-radius:999px;bor
       <input id="t" maxlength="200" autocomplete="off">
       <div class="row">
         <div><label for="d">Réalisateur</label><input id="d" maxlength="200" autocomplete="off"></div>
-        <div><label for="y">Année</label><input id="y" inputmode="numeric" maxlength="4" autocomplete="off"></div>
+        <div><label for="y">Année</label><input id="y" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" autocomplete="off"></div>
       </div>
       <label for="cs">Catégorie</label>
       <select id="cs"></select>
@@ -165,6 +165,15 @@ const PRESET = ['Western', 'Nouvelle vague', 'Péplum', 'Italien', 'Film noir', 
 const norm = c => c.trim().replace(/\s+/g, ' ').slice(0, 40);
 const same = (a, b) => a.localeCompare(b, 'fr', {sensitivity: 'base'}) === 0;
 const thisYear = new Date().getFullYear();
+// Texte simple uniquement (mêmes règles que la base) : pas de balises, pas d'adresse web
+const TLD = 'com|fr|net|org|io|be|ch|eu|info|biz|tv|ly|gl|gg|xyz|app|dev|link|site|online|shop|uk|ru|cn';
+const URL_RE = new RegExp(`(https?:|ftp:|mailto:|javascript:|data:|file:|//|www\\.)|[a-z0-9-]\\.(${TLD})(?![a-z0-9_])`, 'i');
+function textProblem(v, multiline = false) {
+  if (/[<>]/.test(v)) return 'les signes < et > ne sont pas acceptés';
+  if (URL_RE.test(v)) return 'les adresses web (liens) ne sont pas acceptées';
+  if ((multiline ? /[\x01-\x09\x0B\x0C\x0E-\x1F\x7F]/ : /[\x01-\x1F\x7F]/).test(v)) return 'ce texte contient des caractères non acceptés';
+  return '';
+}
 
 // Lien d'entrée expiré ou déjà utilisé : Supabase renvoie l'erreur dans l'adresse
 const hashParams = new URLSearchParams(location.hash.slice(1));
@@ -245,10 +254,16 @@ $('f').addEventListener('submit', async e => {
   const title = $('t').value.trim(), director = $('d').value.trim(), why = $('w').value.trim(), y = $('y').value.trim(), year = Number(y);
   $('ok').textContent = '';
   if (!title) { $('err').textContent = 'Indiquez au moins le titre du film.'; $('t').focus(); return; }
+  for (const [id, label, val, ml] of [['t', 'Titre', title, 0], ['d', 'Réalisateur', director, 0], ['w', 'Pourquoi ce film est bien', why, 1]]) {
+    const pb = textProblem(val, !!ml);
+    if (pb) { $('err').textContent = `${label} : ${pb}.`; $(id).focus(); return; }
+  }
   if (y && (!/^\d{4}$/.test(y) || year < 1888 || year > thisYear + 2)) { $('err').textContent = `L’année doit être entre 1888 et ${thisYear + 2}.`; $('y').focus(); return; }
   if ($('cs').value === '__autre') {
     const c = norm($('nc').value);
     if (!c) { $('err').textContent = 'Indiquez le nom de la nouvelle catégorie, ou choisissez-en une dans la liste.'; $('nc').focus(); return; }
+    const pb = textProblem(c);
+    if (pb) { $('err').textContent = `Nouvelle catégorie : ${pb}.`; $('nc').focus(); return; }
     sel = allCats().find(o => same(o, c)) || c;
   } else sel = $('cs').value;
   $('save').disabled = true; $('err').textContent = '';
@@ -256,11 +271,13 @@ $('f').addEventListener('submit', async e => {
   const wasEdit = editing;
   const { error } = wasEdit ? await sb.from('films').update(row).eq('id', wasEdit) : await sb.from('films').insert(row);
   $('save').disabled = false;
-  if (error) { $('err').textContent = error.code === '42501' ? 'Vous n’avez pas le droit de faire cela.' : 'L’enregistrement a échoué, réessayez.'; return; }
+  if (error) { $('err').textContent = error.code === '23514' ? 'Un champ contient un lien ou des caractères non acceptés.' : error.code === '42501' ? 'Vous n’avez pas le droit de faire cela.' : 'L’enregistrement a échoué, réessayez.'; return; }
   resetForm(); await loadFilms();
   if (wasEdit) location.hash = 'liste';
   else $('ok').innerHTML = '« ' + esc(title) + ' » a bien été ajouté. <a href="#liste">Voir les recommandations</a>';
 });
+// Année : uniquement des chiffres, 4 au maximum, même en collant du texte
+$('y').addEventListener('input', () => { const v = $('y').value.replace(/\D/g, '').slice(0, 4); if (v !== $('y').value) $('y').value = v; });
 $('cancel').addEventListener('click', () => { const was = editing; resetForm(); if (was) location.hash = 'liste'; });
 $('cs').addEventListener('change', () => {
   const v = $('cs').value; $('nc').hidden = v !== '__autre';

@@ -27,6 +27,26 @@ create table if not exists public.films (
 );
 create index if not exists films_created_at_idx on public.films (created_at desc);
 
+-- Texte simple uniquement : pas de balises HTML, pas d'adresse web, pas de caractères de contrôle
+create or replace function public.is_plain_text(t text, multiline boolean default false) returns boolean
+language sql immutable set search_path = '' as $$
+  select t is null or (
+        t !~ '[<>]'
+    and t !~* '(https?:|ftp:|mailto:|javascript:|data:|file:|//|www\.)'
+    and t !~* '[a-z0-9-]\.(com|fr|net|org|io|be|ch|eu|info|biz|tv|ly|gl|gg|xyz|app|dev|link|site|online|shop|uk|ru|cn)\M'
+    and t !~ (case when multiline then '[\x01-\x09\x0B\x0C\x0E-\x1F\x7F]' else '[\x01-\x1F\x7F]' end)
+  );
+$$;
+
+alter table public.films drop constraint if exists films_title_texte;
+alter table public.films add constraint films_title_texte check (public.is_plain_text(title));
+alter table public.films drop constraint if exists films_director_texte;
+alter table public.films add constraint films_director_texte check (public.is_plain_text(director));
+alter table public.films drop constraint if exists films_why_texte;
+alter table public.films add constraint films_why_texte check (public.is_plain_text(why, true));
+alter table public.films drop constraint if exists films_category_texte;
+alter table public.films add constraint films_category_texte check (public.is_plain_text(category));
+
 -- 3. Fonctions d'aide -------------------------------------------------------
 create or replace function public.is_invited() returns boolean
 language sql stable security definer set search_path = '' as $$
