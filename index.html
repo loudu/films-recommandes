@@ -64,7 +64,7 @@ button{font:500 17px/1 Oswald,sans-serif;min-height:46px;border-radius:999px;bor
 .bar h2{font-size:clamp(32px,5vw,44px);color:var(--teal);flex:1 1 240px}
 #cnt{font:500 .5em Oswald,sans-serif;color:var(--mute);vertical-align:middle}
 .bar input{flex:1 1 220px;width:auto}.bar select{width:auto;flex:0 0 auto}
-.list{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:22px}
+.list{display:grid;align-items:start;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:22px}
 .film{--c:var(--teal);background:var(--card);border-radius:14px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 2px 0 var(--line),0 12px 26px light-dark(rgba(15,94,99,.14),rgba(0,0,0,.35))}
 .film:nth-child(3n+2){--c:var(--red)}.film:nth-child(3n){--c:#b9851a}
 .head{background:var(--c);color:#fff;padding:18px 18px 22px;position:relative;
@@ -89,6 +89,14 @@ button{font:500 17px/1 Oswald,sans-serif;min-height:46px;border-radius:999px;bor
 .tag{font:500 14px/1 Oswald,sans-serif;background:rgba(0,0,0,.25);color:#fff;border:1px solid rgba(255,255,255,.55);border-radius:999px;padding:5px 10px}
 .note{background:light-dark(#fff3cf,#3a2d05);border-radius:8px;padding:10px 14px;margin-bottom:16px}
 .note:empty{display:none}
+.pic{display:block;width:100%;aspect-ratio:4/5;object-fit:cover;background:#1a0b0e}
+.photo{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.photo input[type=file]{position:absolute;width:1px;height:1px;opacity:0}
+.photo label.pick{display:inline-flex;align-items:center;margin:0;font:500 16px/1 Oswald,sans-serif;min-height:46px;padding:0 20px;border-radius:999px;border:2px dashed var(--teal);color:var(--teal);cursor:pointer}
+.photo input[type=file]:focus-visible+label.pick{outline:3px solid var(--mustard);outline-offset:2px}
+.photo img{width:96px;height:120px;object-fit:cover;border-radius:8px;border:2px solid var(--line)}
+.photo img[hidden],.photo button[hidden]{display:none}
+.photo button{min-height:40px;font-size:15px;padding:0 14px}
 </style>
 </head>
 <body>
@@ -127,6 +135,12 @@ button{font:500 17px/1 Oswald,sans-serif;min-height:46px;border-radius:999px;bor
       <label for="cs">Catégorie</label>
       <select id="cs"></select>
       <input id="nc" maxlength="40" placeholder="Nom de la nouvelle catégorie" aria-label="Nouvelle catégorie" autocomplete="off" hidden style="margin-top:10px">
+      <label id="pl">Photo du film <small style="font-family:'Josefin Sans';color:var(--mute)">(facultatif)</small></label>
+      <div class="photo" role="group" aria-labelledby="pl">
+        <img id="pp" alt="Aperçu de la photo" hidden>
+        <input id="pf" type="file" accept="image/*"><label class="pick" for="pf" id="pk">Choisir une photo</label>
+        <button class="ghost" id="px" type="button" hidden>Retirer la photo</button>
+      </div>
       <label for="w">Pourquoi ce film est bien</label>
       <textarea id="w" maxlength="4000" placeholder="Ce qui vous a marqué, à qui vous le conseillez…"></textarea>
       <p class="err" id="err" role="alert"></p>
@@ -181,6 +195,7 @@ const linkError = hashParams.get('error_code') || hashParams.get('error');
 
 const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { auth: { flowType: 'implicit', detectSessionInUrl: true, persistSession: true } });
 
+let photoBlob = null, photoRemoved = false, photoUrls = {};
 let session = null, me = { name: '', is_admin: false }, films = [], editing = null, sel = '', filt = '', pendingDel = null;
 
 // ---------- Catégories ----------
@@ -225,6 +240,7 @@ function render() {
     const who = f.author_name ? `<span class="by">par ${esc(f.author_name)}</span>` : '';
     const when = new Date(f.created_at).toLocaleDateString('fr-FR', {day: 'numeric', month: 'long', year: 'numeric'});
     return `<article class="film">
+      ${f.photo && photoUrls[f.photo] ? `<img class="pic" src="${esc(photoUrls[f.photo])}" alt="Photo du film ${esc(f.title)}" loading="lazy">` : ''}
       <div class="head"><h3 class="ft">${esc(f.title)}</h3>
       ${f.director || f.year ? `<div class="meta">${f.director ? `<span>de ${esc(f.director)}</span>` : ''}${f.year ? `<span class="yr">${esc(f.year)}</span>` : ''}</div>` : ''}
       ${f.category ? `<div class="tags"><span class="tag">${esc(f.category)}</span></div>` : ''}</div>
@@ -241,11 +257,48 @@ async function loadFilms() {
   $('note').textContent = '';
   films = data.map(x => ({ ...x, title: x.title || '', director: x.director || '', why: x.why || '', category: x.category ? norm(x.category) : '' }));
   render(); if (!editing) renderCats();
+  const paths = films.map(f => f.photo).filter(p => p && !photoUrls[p]);
+  if (paths.length) {
+    const { data: urls } = await sb.storage.from('photos').createSignedUrls(paths, 60 * 60 * 24);
+    for (const u of urls || []) if (u.signedUrl && !u.error) photoUrls[u.path] = u.signedUrl;
+    render();
+  }
 }
+
+// ---------- Photo ----------
+// Réduit la photo (1200 px max), la convertit en JPEG et retire ses métadonnées (lieu, appareil…)
+async function shrink(file) {
+  const bmp = await createImageBitmap(file);
+  const k = Math.min(1, 1200 / Math.max(bmp.width, bmp.height));
+  const c = document.createElement('canvas');
+  c.width = Math.round(bmp.width * k); c.height = Math.round(bmp.height * k);
+  c.getContext('2d').drawImage(bmp, 0, 0, c.width, c.height); bmp.close?.();
+  for (const q of [0.85, 0.7, 0.55]) {
+    const b = await new Promise(r => c.toBlob(r, 'image/jpeg', q));
+    if (b && b.size <= 1900000) return b;
+  }
+  throw new Error('trop lourde');
+}
+function showPhoto(src) {
+  if ($('pp').src.startsWith('blob:')) URL.revokeObjectURL($('pp').src);
+  $('pp').hidden = !src; if (src) $('pp').src = src; else $('pp').removeAttribute('src');
+  $('px').hidden = !src; $('pk').textContent = src ? 'Changer de photo' : 'Choisir une photo';
+}
+$('pf').addEventListener('change', async () => {
+  const file = $('pf').files[0]; $('pf').value = ''; if (!file) return;
+  $('err').textContent = '';
+  if (!file.type.startsWith('image/') && file.type !== '') { $('err').textContent = 'Photo : choisissez un fichier image (JPEG, PNG, WebP…).'; return; }
+  if (file.size > 25e6) { $('err').textContent = 'Photo : le fichier dépasse 25 Mo.'; return; }
+  try { photoBlob = await shrink(file); photoRemoved = false; showPhoto(URL.createObjectURL(photoBlob)); }
+  catch (e) { $('err').textContent = 'Photo : ce fichier n’est pas une image lisible. Essayez une photo JPEG ou PNG.'; }
+});
+$('px').addEventListener('click', () => { photoBlob = null; photoRemoved = true; showPhoto(''); });
+const uuid = () => crypto.randomUUID?.() ?? '10000000-1000-4000-8000-100000000000'.replace(/[018]/g, c => (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16));
+async function removeFile(path) { if (path) await sb.storage.from('photos').remove([path]); }
 
 // ---------- Formulaire ----------
 function resetForm() {
-  editing = null; $('f').reset(); $('err').textContent = ''; sel = ''; $('cs').value = ''; renderCats();
+  editing = null; photoBlob = null; photoRemoved = false; showPhoto(''); $('f').reset(); $('err').textContent = ''; sel = ''; $('cs').value = ''; renderCats();
   $('ft').textContent = 'Recommander un film'; $('save').textContent = 'Publier la recommandation'; $('cancel').hidden = true;
 }
 
@@ -268,9 +321,19 @@ $('f').addEventListener('submit', async e => {
   } else sel = $('cs').value;
   $('save').disabled = true; $('err').textContent = '';
   const row = { title, director, year: y ? year : null, why, category: sel || null };
-  const wasEdit = editing;
+  const wasEdit = editing, before = wasEdit ? films.find(f => f.id === wasEdit)?.photo || null : null;
+  let uploaded = null;
+  if (photoBlob) try {
+    uploaded = `${session.user.id}/${uuid()}.jpg`;
+    const { error: upErr } = await sb.storage.from('photos').upload(uploaded, photoBlob, { contentType: 'image/jpeg' });
+    if (upErr) { $('save').disabled = false; $('err').textContent = 'L’envoi de la photo a échoué, réessayez.'; return; }
+    row.photo = uploaded;
+  } catch (e) { $('save').disabled = false; $('err').textContent = 'L’envoi de la photo a échoué, réessayez.'; return; }
+  else if (photoRemoved) row.photo = null;
   const { error } = wasEdit ? await sb.from('films').update(row).eq('id', wasEdit) : await sb.from('films').insert(row);
   $('save').disabled = false;
+  if (error) await removeFile(uploaded);
+  else if (before && (uploaded || photoRemoved)) removeFile(before);
   if (error) { $('err').textContent = error.code === '23514' ? 'Un champ contient un lien ou des caractères non acceptés.' : error.code === '42501' ? 'Vous n’avez pas le droit de faire cela.' : 'L’enregistrement a échoué, réessayez.'; return; }
   resetForm(); await loadFilms();
   if (wasEdit) location.hash = 'liste';
@@ -290,6 +353,7 @@ $('list').addEventListener('click', async e => {
     const f = films.find(x => x.id === b.dataset.e); if (!f) return;
     editing = f.id; $('t').value = f.title; $('d').value = f.director; $('y').value = f.year || ''; $('w').value = f.why;
     sel = f.category || ''; $('cs').value = ''; renderCats();
+    photoBlob = null; photoRemoved = false; showPhoto(f.photo ? photoUrls[f.photo] || '' : '');
     $('ft').textContent = 'Modifier la recommandation'; $('save').textContent = 'Enregistrer'; $('cancel').hidden = false;
     $('ok').textContent = ''; location.hash = 'recommander'; $('t').focus();
   } else if (b.dataset.x) {
@@ -297,6 +361,7 @@ $('list').addEventListener('click', async e => {
     pendingDel = null; b.disabled = true;
     const { error } = await sb.from('films').delete().eq('id', b.dataset.x);
     if (error) { b.disabled = false; b.textContent = 'Échec'; return; }
+    removeFile(films.find(f => f.id === b.dataset.x)?.photo);
     if (editing === b.dataset.x) resetForm();
     await loadFilms();
   }

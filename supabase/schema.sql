@@ -27,6 +27,12 @@ create table if not exists public.films (
 );
 create index if not exists films_created_at_idx on public.films (created_at desc);
 
+-- Photo du film (chemin dans le stockage « photos », ajouté après coup)
+alter table public.films add column if not exists photo text;
+alter table public.films drop constraint if exists films_photo_chemin;
+alter table public.films add constraint films_photo_chemin
+  check (photo is null or photo ~ '^[0-9a-f-]{36}/[0-9a-f-]{36}\.jpg$');
+
 -- Texte simple uniquement : pas de balises HTML, pas d'adresse web, pas de caractères de contrôle
 create or replace function public.is_plain_text(t text, multiline boolean default false) returns boolean
 language sql immutable set search_path = '' as $$
@@ -126,3 +132,26 @@ end $$;
 drop trigger if exists only_invited_signup on auth.users;
 create trigger only_invited_signup before insert on auth.users
   for each row execute function public.only_invited_signup();
+
+-- 6. Photos des films -------------------------------------------------------
+-- Stockage privé : seuls les invités voient les photos ; images JPEG, 2 Mo maximum
+-- (le site réduit et convertit chaque photo avant l'envoi).
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values ('photos', 'photos', false, 2097152, array['image/jpeg'])
+on conflict (id) do update set public = false, file_size_limit = 2097152,
+  allowed_mime_types = array['image/jpeg'];
+
+drop policy if exists "photos : invités voient" on storage.objects;
+create policy "photos : invités voient" on storage.objects for select to authenticated
+  using (bucket_id = 'photos' and public.is_invited());
+
+drop policy if exists "photos : invités envoient dans leur dossier" on storage.objects;
+create policy "photos : invités envoient dans leur dossier" on storage.objects for insert to authenticated
+  with check (bucket_id = 'photos' and public.is_invited()
+              and (storage.foldername(name))[1] = auth.uid()::text
+              and name ~ '^[0-9a-f-]{36}/[0-9a-f-]{36}\.jpg$');
+
+drop policy if exists "photos : auteur ou admin supprime" on storage.objects;
+create policy "photos : auteur ou admin supprime" on storage.objects for delete to authenticated
+  using (bucket_id = 'photos' and public.is_invited()
+         and ((storage.foldername(name))[1] = auth.uid()::text or public.is_admin()));

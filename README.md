@@ -1,10 +1,10 @@
 # Films recommandés
 
-Site privé de recommandations de films. Seules les adresses e-mail de la liste des invités peuvent entrer : chacun tape son e-mail, reçoit un lien d'entrée, et peut ajouter, modifier ou supprimer ses propres films. Un invité « admin » peut modifier ou supprimer tous les films.
+Site privé de recommandations de films. Seules les adresses e-mail de la liste des invités peuvent entrer : chacun tape son e-mail, reçoit un lien d'entrée, et peut ajouter, modifier ou supprimer ses propres films, avec une photo si on le souhaite. Les photos sont réduites et nettoyées de leurs métadonnées avant l'envoi, et seuls les invités peuvent les voir. Un invité « admin » peut modifier ou supprimer tous les films.
 
 - `index.html` : le site (aucune compilation nécessaire)
 - `config.js` : l'adresse du projet Supabase et sa clé publique
-- `supabase/schema.sql` : les tables et les règles d'accès
+- `supabase/schema.sql` : les tables, le stockage des photos et les règles d'accès (on peut le relancer sans risque après une mise à jour)
 
 ## Mise en ligne (une seule fois, environ 20 minutes)
 
